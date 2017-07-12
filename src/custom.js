@@ -93,20 +93,29 @@ function resolveMiddlewareWrapper(resolve = defaultResolveFn, directives = {}) {
  * Scanning the shema and wrapping the resolve of each field with the support
  * of the graphql custom directives resolve execution
  */
-function wrapFieldsWithMiddleware(fields) {
+function wrapFieldsWithMiddleware(fields,parent) {
+    for (let label in fields) {
+        let field = fields.hasOwnProperty(label) ? fields[label] : null;
+        if (!!field && typeof field == 'object') {
+			if(field.attachedDirective) continue;
+                field.attachedDirective = true;
+                field.resolve = resolveMiddlewareWrapper(field.resolve, field.directives);
+				
+            let colunm = parent ? parent + "." + label : label
+            let count = (colunm.match(/\./g) || []).length;
+            if (field.type._fields) {
+                wrapFieldsWithMiddleware(field.type._fields,colunm)
+            } else if (field.type.ofType && field.type.ofType._fields) {
+                if(count >= 6) continue;
+                wrapFieldsWithMiddleware(field.type.ofType._fields,colunm);
+            }else{
+                // if(field.attachedDirective) continue;
+                // field.attachedDirective = true;
+                // field.resolve = resolveMiddlewareWrapper(field.resolve, field.directives);
+            }
 
-	for (let label in fields) {
-		let field = fields.hasOwnProperty(label) ? fields[label] : null;
-
-		if (!!field && typeof field == 'object') {
-			field.resolve = resolveMiddlewareWrapper(field.resolve, field.directives);
-			if (field.type._fields) {
-				wrapFieldsWithMiddleware(field.type._fields)
-			} else if (field.type.ofType && field.type.ofType._fields) {
-				wrapFieldsWithMiddleware(field.type.ofType._fields);
-			}
-		}
-	}
+        }
+    }
 }
 
 /**
