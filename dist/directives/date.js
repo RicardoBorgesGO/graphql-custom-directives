@@ -8,7 +8,8 @@ var _custom = require('../custom');
 
 var _lodash = require('lodash');
 
-var moment = require('moment');
+var moment = require('moment-timezone');
+moment.tz.setDefault('America/Sao_Paulo');
 moment.locale('pt-BR');
 
 var DEFAULT_DATE_FORMAT = 'DD MMM YYYY HH:mm';

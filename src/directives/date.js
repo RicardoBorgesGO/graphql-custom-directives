@@ -3,7 +3,8 @@ import { DirectiveLocation } from 'graphql/type/directives';
 import { GraphQLCustomDirective } from '../custom';
 import { _ } from 'lodash';
 
-const moment = require('moment');
+var moment = require('moment-timezone');
+moment.tz.setDefault('America/Sao_Paulo');
 moment.locale('pt-BR');
 
 const DEFAULT_DATE_FORMAT = 'DD MMM YYYY HH:mm';
