@@ -69,7 +69,7 @@ exports.GraphQLDateFromNowDirective = new _custom.GraphQLCustomDirective({
             if (!Date.parse(input) && ('' + input).length !== 13) {
                 return input;
             }
-            return moment.utc(input).fromNow(Boolean);
+            return moment.utc(input).fromNow(as);
         });
     }
 });
