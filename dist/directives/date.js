@@ -8,8 +8,7 @@ var _custom = require('../custom');
 
 var _lodash = require('lodash');
 
-var moment = require('moment-timezone');
-moment.tz.setDefault('America/Sao_Paulo');
+var moment = require('moment');
 moment.locale('pt-BR');
 
 var DEFAULT_DATE_FORMAT = 'DD MMM YYYY HH:mm';
@@ -31,7 +30,7 @@ exports.GraphQLDateDirective = new _custom.GraphQLCustomDirective({
 
             var format = as || DEFAULT_DATE_FORMAT;
 
-            if (format.indexOf('days') !== -1 || format.indexOf('ago') !== -1) {
+            if (format.indexOf('days') !== -1 || format.indexOf('ago') !== -1 || format.indexOf('dias') !== -1 || format.indexOf('atrás') !== -1) {
                 return moment.utc().diff(input, 'days') + ' ' + format;
             }
 
@@ -44,6 +43,33 @@ exports.GraphQLDateDirective = new _custom.GraphQLCustomDirective({
             }
 
             return moment.utc(input).format(format);
+        });
+    }
+});
+
+exports.GraphQLDateFromNowDirective = new _custom.GraphQLCustomDirective({
+    name: 'fromNow',
+    description: 'A common way of displaying time is handled by moment#fromNow. This is sometimes called timeago or relative time.',
+    locations: [_directives.DirectiveLocation.FIELD],
+    args: {
+        as: {
+            type: _graphql.GraphQLBoolean,
+            description: 'If you pass true, you can get the value without the suffix.'
+        }
+    },
+    resolve: function resolve(_resolve3, source, _ref3) {
+        var as = _ref3.as;
+
+        return _resolve3().then(function (input) {
+
+            if (('' + input).length === 13) {
+                input = Number(input);
+            }
+
+            if (!Date.parse(input) && ('' + input).length !== 13) {
+                return input;
+            }
+            return moment.utc(input).fromNow(Boolean);
         });
     }
 });

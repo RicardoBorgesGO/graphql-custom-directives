@@ -79,3 +79,46 @@ exports.GraphQLTemplateDirective =  new GraphQLCustomDirective({
         });
     }
 });
+
+exports.GraphQLDecodeDirective =  new GraphQLCustomDirective({
+    name: 'decode',
+    description: `Format the input as using lodash template`,
+    locations: [
+        DirectiveLocation.FIELD
+    ],
+    args: {
+        as: {
+            type: new GraphQLNonNull(GraphQLString),
+            description: 'A template given by lodash module'
+        }
+    },
+    resolve(resolve, source, { as }) {
+        return resolve().then(input => {
+            let templateString = as;
+
+            templateString = templateString.replace(/\({1}([a-z]{1,})\)\}/g,'(data.$1)}').replace(/\$\{([a-z]{1,})/g,'${data.$1');
+
+            let output = template(templateString, { variable: 'data' })
+                (Object.assign({
+                    lowerCase, upperCase, camelCase,
+                    startCase, capitalize, kebabCase,
+                    trim, defaultTo, toLower, toUpper
+                }, {
+                    input
+                }, source));
+
+            return output;
+        });
+    }
+});
+
+//  tryParse: function (value) {
+//         if (typeof value == 'boolean' || value instanceof Boolean)
+//             return value;
+//         if (typeof value == 'string' || value instanceof String) {
+//             value = value.trim().toLowerCase();
+//             if (value === 'true' || value === 'false')
+//                 return value === 'true';
+//         }
+//         return { error: true, msg: 'Parsing error. Given value has no boolean meaning.' }
+//     }

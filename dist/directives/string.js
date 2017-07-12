@@ -84,3 +84,45 @@ exports.GraphQLTemplateDirective = new _custom.GraphQLCustomDirective({
         });
     }
 });
+
+exports.GraphQLDecodeDirective = new _custom.GraphQLCustomDirective({
+    name: 'decode',
+    description: 'Format the input as using lodash template',
+    locations: [_directives.DirectiveLocation.FIELD],
+    args: {
+        as: {
+            type: new _graphql.GraphQLNonNull(_graphql.GraphQLString),
+            description: 'A template given by lodash module'
+        }
+    },
+    resolve: function resolve(_resolve3, source, _ref3) {
+        var as = _ref3.as;
+
+        return _resolve3().then(function (input) {
+            var templateString = as;
+
+            templateString = templateString.replace(/\({1}([a-z]{1,})\)\}/g, '(data.$1)}').replace(/\$\{([a-z]{1,})/g, '${data.$1');
+
+            var output = (0, _lodash.template)(templateString, { variable: 'data' })(Object.assign({
+                lowerCase: _lodash.lowerCase, upperCase: _lodash.upperCase, camelCase: _lodash.camelCase,
+                startCase: _lodash.startCase, capitalize: _lodash.capitalize, kebabCase: _lodash.kebabCase,
+                trim: _lodash.trim, defaultTo: _lodash.defaultTo, toLower: _lodash.toLower, toUpper: _lodash.toUpper
+            }, {
+                input: input
+            }, source));
+
+            return output;
+        });
+    }
+});
+
+//  tryParse: function (value) {
+//         if (typeof value == 'boolean' || value instanceof Boolean)
+//             return value;
+//         if (typeof value == 'string' || value instanceof String) {
+//             value = value.trim().toLowerCase();
+//             if (value === 'true' || value === 'false')
+//                 return value === 'true';
+//         }
+//         return { error: true, msg: 'Parsing error. Given value has no boolean meaning.' }
+//     }

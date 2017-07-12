@@ -1,4 +1,4 @@
-import { GraphQLDateDirective, GraphQLTimeOffsetDirective } from '../../src/index'
+import { GraphQLDateDirective, GraphQLTimeOffsetDirective, GraphQLDateFromNowDirective } from '../../src/index'
 import { testEqual } from '../utils';
 
 import { expect } from 'chai';
@@ -62,6 +62,14 @@ describe('directives/date', () => {
         const query = `{ value(input: "${(new Date()).toISOString()}") @date(as:"days") }`,
             directives = [ GraphQLDateDirective],
             expected = { value: "0 days" };
+
+        testEqual({ directives, query, expected, done });
+    });
+
+    it('expected directive to alter execution of graphql and result formatted number with from now', (done) => {
+        const query = `{ value(input: "${(new Date()).toISOString()}") @fromNow(as:true) }`,
+            directives = [ GraphQLDateFromNowDirective],
+            expected = { value: "poucos segundos" };
 
         testEqual({ directives, query, expected, done });
     });

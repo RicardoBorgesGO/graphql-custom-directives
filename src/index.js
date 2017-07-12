@@ -5,7 +5,8 @@ import {
 
 import {
     GraphQLDateDirective,
-	GraphQLTimeOffsetDirective
+	GraphQLTimeOffsetDirective,
+    GraphQLDateFromNowDirective
 } from './directives/date';
 
 import {
@@ -50,3 +51,4 @@ exports.GraphQLToLowerDirective = GraphQLToLowerDirective;
 exports.GraphQLToUpperDirective = GraphQLToUpperDirective;
 exports.GraphQLTemplateDirective = GraphQLTemplateDirective;
 exports.GraphQLTimeOffsetDirective = GraphQLTimeOffsetDirective;
+exports.GraphQLDateFromNowDirective = GraphQLDateFromNowDirective;
