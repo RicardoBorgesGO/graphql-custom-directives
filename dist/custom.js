@@ -104,7 +104,7 @@ function resolveMiddlewareWrapper() {
 	var serverDirectives = parseSchemaDirectives(directives);
 
 	return function (source, args, context, info) {
-		var directives = serverDirectives.concat(info.fieldASTs[0].directives);
+		var directives = serverDirectives.concat((info.fieldASTs || info.fieldNodes)[0].directives);
 		var directive = directives.filter(function (d) {
 			return DEFAULT_DIRECTIVES.indexOf(d.name.value) === -1;
 		})[0];
@@ -166,7 +166,9 @@ function wrapFieldsWithMiddleware(fields, parent) {
 	for (var label in fields) {
 		var field = fields.hasOwnProperty(label) ? fields[label] : null;
 		if (!!field && (typeof field === 'undefined' ? 'undefined' : _typeof(field)) == 'object') {
-			if (field.attachedDirective) continue;
+			if (field.attachedDirective) {
+				continue;
+			}
 			field.attachedDirective = true;
 			field.resolve = resolveMiddlewareWrapper(field.resolve, field.directives);
 
