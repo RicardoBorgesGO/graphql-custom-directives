@@ -9,6 +9,7 @@ var _custom = require('../custom');
 var _lodash = require('lodash');
 
 var moment = require('moment');
+moment.locale('pt-BR');
 
 var DEFAULT_DATE_FORMAT = 'DD MMM YYYY HH:mm';
 
