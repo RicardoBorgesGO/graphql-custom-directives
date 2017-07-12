@@ -68,7 +68,7 @@ function resolveMiddlewareWrapper(resolve = defaultResolveFn, directives = {}) {
 	const serverDirectives = parseSchemaDirectives(directives);
 
 	return (source, args, context, info) => {
-		const directives = serverDirectives.concat(info.fieldASTs[0].directives);
+		const directives = serverDirectives.concat((info.fieldASTs || info.fieldNodes)[0].directives);
 		const directive = directives.filter(d => DEFAULT_DIRECTIVES.indexOf(d.name.value) === -1)[0];
 
 		if (!directive) {
@@ -93,36 +93,38 @@ function resolveMiddlewareWrapper(resolve = defaultResolveFn, directives = {}) {
  * Scanning the shema and wrapping the resolve of each field with the support
  * of the graphql custom directives resolve execution
  */
-function wrapFieldsWithMiddleware(fields,parent) {
-    for (let label in fields) {
-        let field = fields.hasOwnProperty(label) ? fields[label] : null;
-        if (!!field && typeof field == 'object') {
-			if(field.attachedDirective) continue;
-                field.attachedDirective = true;
-                field.resolve = resolveMiddlewareWrapper(field.resolve, field.directives);
-				
-            let colunm = parent ? parent + "." + label : label
-            let count = (colunm.match(/\./g) || []).length;
-            if (field.type._fields) {
-                wrapFieldsWithMiddleware(field.type._fields,colunm)
-            } else if (field.type.ofType && field.type.ofType._fields) {
-                if(count >= 6) continue;
-                wrapFieldsWithMiddleware(field.type.ofType._fields,colunm);
-            }else{
-                // if(field.attachedDirective) continue;
-                // field.attachedDirective = true;
-                // field.resolve = resolveMiddlewareWrapper(field.resolve, field.directives);
-            }
+function wrapFieldsWithMiddleware(fields, parent) {
+	for (let label in fields) {
+		let field = fields.hasOwnProperty(label) ? fields[label] : null;
+		if (!!field && typeof field == 'object') {
+			if (field.attachedDirective) {
+				continue;
+			}
+			field.attachedDirective = true;
+			field.resolve = resolveMiddlewareWrapper(field.resolve, field.directives);
 
-        }
-    }
+			let colunm = parent ? parent + "." + label : label
+			let count = (colunm.match(/\./g) || []).length;
+			if (field.type._fields) {
+				wrapFieldsWithMiddleware(field.type._fields, colunm)
+			} else if (field.type.ofType && field.type.ofType._fields) {
+				if (count >= 6) continue;
+				wrapFieldsWithMiddleware(field.type.ofType._fields, colunm);
+			} else {
+				// if(field.attachedDirective) continue;
+				// field.attachedDirective = true;
+				// field.resolve = resolveMiddlewareWrapper(field.resolve, field.directives);
+			}
+
+		}
+	}
 }
 
 /**
  * create a new graphql custom directive which contain a resolve
  * function for altering the execution of the graphql
  */
-exports.GraphQLCustomDirective = function(config) {
+exports.GraphQLCustomDirective = function (config) {
 	const directive = new GraphQLDirective(config);
 
 	if (config.resolve) {
@@ -135,7 +137,7 @@ exports.GraphQLCustomDirective = function(config) {
 /**
  * Apply custom directives support in the graphql schema
  */
-exports.applySchemaCustomDirectives = function(schema) {
+exports.applySchemaCustomDirectives = function (schema) {
 
 	if (!(schema instanceof GraphQLSchema)) {
 		throw new Error('Schema must be instanceof GraphQLSchema');
