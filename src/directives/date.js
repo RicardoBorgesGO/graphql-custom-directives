@@ -4,6 +4,7 @@ import { GraphQLCustomDirective } from '../custom';
 import { _ } from 'lodash';
 
 const moment = require('moment');
+moment.locale('pt-BR');
 
 const DEFAULT_DATE_FORMAT = 'DD MMM YYYY HH:mm';
 
