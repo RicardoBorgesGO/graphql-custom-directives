@@ -1,4 +1,4 @@
-import { GraphQLDateDirective, GraphQLTimeOffsetDirective, GraphQLDateFromNowDirective } from '../../src/index'
+import { GraphQLDateDirective, GraphQLTimeOffsetDirective, GraphQLDateFromNowDirective, GraphQLDateDiffDirective } from '../../src/index'
 import { testEqual } from '../utils';
 
 import { expect } from 'chai';
@@ -67,13 +67,20 @@ describe('directives/date', () => {
     });
 
     it('expected directive to alter execution of graphql and result formatted number with from now', (done) => {
-        const query = `{ value(input: "${(new Date()).toISOString()}") @fromNow(as:true) }`,
+        const query = `{ value(input: "${(new Date()).toISOString()}") @fromNow(suffix:true) }`,
             directives = [ GraphQLDateFromNowDirective],
             expected = { value: "poucos segundos" };
 
         testEqual({ directives, query, expected, done });
     });
 
+    it('expected directive to alter execution of graphql and result formatted number with date diff', (done) => {
+        const query = `{ value(input: "1479964283000") @dateDiff(as:"month") }`,
+            directives = [ GraphQLDateDiffDirective],
+            expected = { value: "7" };
+
+        testEqual({ directives, query, expected, done });
+    });
 
     it('expected directive to alter execution of graphql and result the original string', (done) => {
         const query = `{ value(input: "AA") @date }`,

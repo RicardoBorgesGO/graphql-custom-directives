@@ -14,6 +14,8 @@ exports.GraphQLCustomDirective = _custom.GraphQLCustomDirective;
 exports.applySchemaCustomDirectives = _custom.applySchemaCustomDirectives;
 
 exports.GraphQLDateDirective = _date.GraphQLDateDirective;
+exports.GraphQLDateFromNowDirective = _date.GraphQLDateFromNowDirective;
+exports.GraphQLDateDiffDirective = _date.GraphQLDateDiffDirective;
 
 exports.GraphQLNumberDirective = _number.GraphQLNumberDirective;
 exports.GraphQLCurrencyDirective = _currency.GraphQLCurrencyDirective;
@@ -30,4 +32,3 @@ exports.GraphQLToLowerDirective = _string.GraphQLToLowerDirective;
 exports.GraphQLToUpperDirective = _string.GraphQLToUpperDirective;
 exports.GraphQLTemplateDirective = _string.GraphQLTemplateDirective;
 exports.GraphQLTimeOffsetDirective = _date.GraphQLTimeOffsetDirective;
-exports.GraphQLDateFromNowDirective = _date.GraphQLDateFromNowDirective;

@@ -6,7 +6,8 @@ import {
 import {
     GraphQLDateDirective,
 	GraphQLTimeOffsetDirective,
-    GraphQLDateFromNowDirective
+    GraphQLDateFromNowDirective,
+    GraphQLDateDiffDirective
 } from './directives/date';
 
 import {
@@ -35,6 +36,8 @@ exports.GraphQLCustomDirective = GraphQLCustomDirective;
 exports.applySchemaCustomDirectives = applySchemaCustomDirectives;
 
 exports.GraphQLDateDirective = GraphQLDateDirective;
+exports.GraphQLDateFromNowDirective = GraphQLDateFromNowDirective;
+exports.GraphQLDateDiffDirective = GraphQLDateDiffDirective;
 
 exports.GraphQLNumberDirective = GraphQLNumberDirective;
 exports.GraphQLCurrencyDirective = GraphQLCurrencyDirective;
@@ -51,4 +54,3 @@ exports.GraphQLToLowerDirective = GraphQLToLowerDirective;
 exports.GraphQLToUpperDirective = GraphQLToUpperDirective;
 exports.GraphQLTemplateDirective = GraphQLTemplateDirective;
 exports.GraphQLTimeOffsetDirective = GraphQLTimeOffsetDirective;
-exports.GraphQLDateFromNowDirective = GraphQLDateFromNowDirective;

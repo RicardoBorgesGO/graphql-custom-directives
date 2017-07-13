@@ -52,9 +52,44 @@ exports.GraphQLDateFromNowDirective = new GraphQLCustomDirective({
         DirectiveLocation.FIELD
     ],
     args: {
-        as: {
+        suffix: {
             type: GraphQLBoolean,
             description: 'If you pass true, you can get the value without the suffix.'
+        }
+    },
+    resolve(resolve, source, { suffix }) {
+        return resolve().then(input => {
+
+            if (`${input}`.length === 13) {
+                input = Number(input);
+            }
+
+            if (!Date.parse(input) && `${input}`.length !== 13) {
+                return input;
+            }
+            return moment.utc(input).fromNow(suffix);
+        });
+    }
+});
+
+exports.GraphQLDateDiffDirective = new GraphQLCustomDirective({
+    name: 'dateDiff',
+    description:
+        'To get the difference in another unit of measurement, pass that measurement to de "as" argument.',
+    locations: [
+        DirectiveLocation.FIELD
+    ],
+    args: {
+        as: {
+            type: GraphQLString,
+            description: `"year" | "years" | "y" |
+                            "month" | "months" | "M" |
+                            "week" | "weeks" | "w" |
+                            "day" | "days" | "d" |
+                            "hour" | "hours" | "h" |
+                            "minute" | "minutes" | "m" |
+                            "second" | "seconds" | "s" |
+                            "millisecond" | "milliseconds" | "ms"'`
         }
     },
     resolve(resolve, source, { as }) {
@@ -67,7 +102,9 @@ exports.GraphQLDateFromNowDirective = new GraphQLCustomDirective({
             if (!Date.parse(input) && `${input}`.length !== 13) {
                 return input;
             }
-            return moment.utc(input).fromNow(as);
+            
+            console.log("ok", moment().diff(moment.utc(input),as))
+            return moment().diff(moment.utc(input),as);
         });
     }
 });
@@ -85,9 +122,7 @@ exports.GraphQLTimeOffsetDirective = new GraphQLCustomDirective({
     resolve: function resolve(_resolve, source, _ref, context, info) {
         var offsetMinutes = _.get(context, _ref.offsetLocation);
         var offsetMilliseconds = offsetMinutes * 60 * 1000;
-
         return _resolve().then(function (input) {
-
             if (('' + input).length === 13) {
                 input  = Number(input) + offsetMilliseconds;
                 return input;

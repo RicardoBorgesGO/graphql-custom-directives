@@ -52,13 +52,13 @@ exports.GraphQLDateFromNowDirective = new _custom.GraphQLCustomDirective({
     description: 'A common way of displaying time is handled by moment#fromNow. This is sometimes called timeago or relative time.',
     locations: [_directives.DirectiveLocation.FIELD],
     args: {
-        as: {
+        suffix: {
             type: _graphql.GraphQLBoolean,
             description: 'If you pass true, you can get the value without the suffix.'
         }
     },
     resolve: function resolve(_resolve3, source, _ref3) {
-        var as = _ref3.as;
+        var suffix = _ref3.suffix;
 
         return _resolve3().then(function (input) {
 
@@ -69,7 +69,36 @@ exports.GraphQLDateFromNowDirective = new _custom.GraphQLCustomDirective({
             if (!Date.parse(input) && ('' + input).length !== 13) {
                 return input;
             }
-            return moment.utc(input).fromNow(as);
+            return moment.utc(input).fromNow(suffix);
+        });
+    }
+});
+
+exports.GraphQLDateDiffDirective = new _custom.GraphQLCustomDirective({
+    name: 'dateDiff',
+    description: 'To get the difference in another unit of measurement, pass that measurement to de "as" argument.',
+    locations: [_directives.DirectiveLocation.FIELD],
+    args: {
+        as: {
+            type: _graphql.GraphQLString,
+            description: '"year" | "years" | "y" |\n                            "month" | "months" | "M" |\n                            "week" | "weeks" | "w" |\n                            "day" | "days" | "d" |\n                            "hour" | "hours" | "h" |\n                            "minute" | "minutes" | "m" |\n                            "second" | "seconds" | "s" |\n                            "millisecond" | "milliseconds" | "ms"\''
+        }
+    },
+    resolve: function resolve(_resolve4, source, _ref4) {
+        var as = _ref4.as;
+
+        return _resolve4().then(function (input) {
+
+            if (('' + input).length === 13) {
+                input = Number(input);
+            }
+
+            if (!Date.parse(input) && ('' + input).length !== 13) {
+                return input;
+            }
+
+            console.log("ok", moment().diff(moment.utc(input), as));
+            return moment().diff(moment.utc(input), as);
         });
     }
 });
@@ -87,9 +116,7 @@ exports.GraphQLTimeOffsetDirective = new _custom.GraphQLCustomDirective({
     resolve: function resolve(_resolve, source, _ref, context, info) {
         var offsetMinutes = _lodash._.get(context, _ref.offsetLocation);
         var offsetMilliseconds = offsetMinutes * 60 * 1000;
-
         return _resolve().then(function (input) {
-
             if (('' + input).length === 13) {
                 input = Number(input) + offsetMilliseconds;
                 return input;
