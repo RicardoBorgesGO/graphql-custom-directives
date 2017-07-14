@@ -48,7 +48,7 @@ exports.GraphQLToLowerDirective = createCustomDirectiveByMethod('toLower', toLow
 
 exports.GraphQLToUpperDirective = createCustomDirectiveByMethod('toUpper', toUpper);
 
-exports.GraphQLTemplateDirective =  new GraphQLCustomDirective({
+exports.GraphQLTemplateDirective = new GraphQLCustomDirective({
     name: 'template',
     description: `Format the input as using lodash template`,
     locations: [
@@ -64,7 +64,7 @@ exports.GraphQLTemplateDirective =  new GraphQLCustomDirective({
         return resolve().then(input => {
             let templateString = as;
 
-            templateString = templateString.replace(/\({1}([a-z]{1,})\)\}/g,'(data.$1)}').replace(/\$\{([a-z]{1,})/g,'${data.$1');
+            templateString = templateString.replace(/\({1}([a-z]{1,})\)\}/g, '(data.$1)}').replace(/\$\{([a-z]{1,})/g, '${data.$1');
 
             let output = template(templateString, { variable: 'data' })
                 (Object.assign({
@@ -72,15 +72,50 @@ exports.GraphQLTemplateDirective =  new GraphQLCustomDirective({
                     startCase, capitalize, kebabCase,
                     trim, defaultTo, toLower, toUpper
                 }, {
-                    input
-                }, source));
+                        input
+                    }, source));
 
             return output;
         });
     }
 });
 
-exports.GraphQLDecodeDirective =  new GraphQLCustomDirective({
+exports.GraphQLYesNoDirective = new GraphQLCustomDirective({
+    name: 'yesNo',
+    description: `Format the input as description boolean text`,
+    locations: [
+        DirectiveLocation.FIELD
+    ],
+    args: {
+        asTrue: {
+            type: GraphQLString,
+            description: 'If true, print this argument'
+        },
+        asFalse: {
+            type: GraphQLString,
+            description: 'If false, print this argument'
+        },
+        asNull: {
+            type: GraphQLString,
+            description: 'If null, return this argument'
+        }
+    },
+    resolve(resolve, source, { asTrue = "sim", asFalse = "não", asNull = "" }) {
+        return resolve().then(input => {
+            if (input == false || input == "false" || input == 0 || input == "0")
+                return asFalse;
+            if (input == true || input == "true" || input == 1 || input == "1")
+                return asTrue;
+            if (input == null || input == "null") {
+                return asNull;
+            }
+            return input;
+        });
+    }
+});
+
+
+exports.GraphQLDecodeDirective = new GraphQLCustomDirective({
     name: 'decode',
     description: `Format the input as using lodash template`,
     locations: [
@@ -96,7 +131,7 @@ exports.GraphQLDecodeDirective =  new GraphQLCustomDirective({
         return resolve().then(input => {
             let templateString = as;
 
-            templateString = templateString.replace(/\({1}([a-z]{1,})\)\}/g,'(data.$1)}').replace(/\$\{([a-z]{1,})/g,'${data.$1');
+            templateString = templateString.replace(/\({1}([a-z]{1,})\)\}/g, '(data.$1)}').replace(/\$\{([a-z]{1,})/g, '${data.$1');
 
             let output = template(templateString, { variable: 'data' })
                 (Object.assign({
@@ -104,21 +139,10 @@ exports.GraphQLDecodeDirective =  new GraphQLCustomDirective({
                     startCase, capitalize, kebabCase,
                     trim, defaultTo, toLower, toUpper
                 }, {
-                    input
-                }, source));
+                        input
+                    }, source));
 
             return output;
         });
     }
 });
-
-//  tryParse: function (value) {
-//         if (typeof value == 'boolean' || value instanceof Boolean)
-//             return value;
-//         if (typeof value == 'string' || value instanceof String) {
-//             value = value.trim().toLowerCase();
-//             if (value === 'true' || value === 'false')
-//                 return value === 'true';
-//         }
-//         return { error: true, msg: 'Parsing error. Given value has no boolean meaning.' }
-//     }

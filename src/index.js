@@ -29,6 +29,7 @@ import {
     GraphQLDefaultToDirective,
     GraphQLToLowerDirective,
     GraphQLToUpperDirective,
+    GraphQLYesNoDirective,
     GraphQLTemplateDirective
 } from './directives/string';
 
@@ -52,5 +53,6 @@ exports.GraphQLTrimDirective = GraphQLTrimDirective;
 exports.GraphQLDefaultToDirective = GraphQLDefaultToDirective;
 exports.GraphQLToLowerDirective = GraphQLToLowerDirective;
 exports.GraphQLToUpperDirective = GraphQLToUpperDirective;
+exports.GraphQLYesNoDirective = GraphQLYesNoDirective;
 exports.GraphQLTemplateDirective = GraphQLTemplateDirective;
 exports.GraphQLTimeOffsetDirective = GraphQLTimeOffsetDirective;

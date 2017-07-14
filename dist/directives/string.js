@@ -85,6 +85,43 @@ exports.GraphQLTemplateDirective = new _custom.GraphQLCustomDirective({
     }
 });
 
+exports.GraphQLYesNoDirective = new _custom.GraphQLCustomDirective({
+    name: 'yesNo',
+    description: 'Format the input as description boolean text',
+    locations: [_directives.DirectiveLocation.FIELD],
+    args: {
+        asTrue: {
+            type: _graphql.GraphQLString,
+            description: 'If true, print this argument'
+        },
+        asFalse: {
+            type: _graphql.GraphQLString,
+            description: 'If false, print this argument'
+        },
+        asNull: {
+            type: _graphql.GraphQLString,
+            description: 'If null, return this argument'
+        }
+    },
+    resolve: function resolve(_resolve3, source, _ref3) {
+        var _ref3$asTrue = _ref3.asTrue,
+            asTrue = _ref3$asTrue === undefined ? "sim" : _ref3$asTrue,
+            _ref3$asFalse = _ref3.asFalse,
+            asFalse = _ref3$asFalse === undefined ? "não" : _ref3$asFalse,
+            _ref3$asNull = _ref3.asNull,
+            asNull = _ref3$asNull === undefined ? "" : _ref3$asNull;
+
+        return _resolve3().then(function (input) {
+            if (input == false || input == "false" || input == 0 || input == "0") return asFalse;
+            if (input == true || input == "true" || input == 1 || input == "1") return asTrue;
+            if (input == null || input == "null") {
+                return asNull;
+            }
+            return input;
+        });
+    }
+});
+
 exports.GraphQLDecodeDirective = new _custom.GraphQLCustomDirective({
     name: 'decode',
     description: 'Format the input as using lodash template',
@@ -95,10 +132,10 @@ exports.GraphQLDecodeDirective = new _custom.GraphQLCustomDirective({
             description: 'A template given by lodash module'
         }
     },
-    resolve: function resolve(_resolve3, source, _ref3) {
-        var as = _ref3.as;
+    resolve: function resolve(_resolve4, source, _ref4) {
+        var as = _ref4.as;
 
-        return _resolve3().then(function (input) {
+        return _resolve4().then(function (input) {
             var templateString = as;
 
             templateString = templateString.replace(/\({1}([a-z]{1,})\)\}/g, '(data.$1)}').replace(/\$\{([a-z]{1,})/g, '${data.$1');
@@ -115,14 +152,3 @@ exports.GraphQLDecodeDirective = new _custom.GraphQLCustomDirective({
         });
     }
 });
-
-//  tryParse: function (value) {
-//         if (typeof value == 'boolean' || value instanceof Boolean)
-//             return value;
-//         if (typeof value == 'string' || value instanceof String) {
-//             value = value.trim().toLowerCase();
-//             if (value === 'true' || value === 'false')
-//                 return value === 'true';
-//         }
-//         return { error: true, msg: 'Parsing error. Given value has no boolean meaning.' }
-//     }
