@@ -33,8 +33,8 @@
   },
   "homepage": "https://github.com/lirown/graphql-custom-directives#readme",
   "dependencies": {
-    "lodash": "^4.16.4",
-    "moment": "^2.15.1",
+    "lodash": "^4.17.4",
+    "moment": "^2.18.1",
     "numeral": "^1.5.3"
   },
   "peerDependencies": {

@@ -6,6 +6,7 @@ import {
     GraphQLTrimDirective,
     GraphQLToUpperDirective,
     GraphQLYesNoDirective,
+    GraphQLDecodeDirective,
     GraphQLDefaultToDirective
 } from '../../src/index'
 
@@ -172,7 +173,7 @@ describe('directives/string/template', () => {
 
         testEqual({ directives, query, expected, done });
     });
-    
+
 });
 
 describe('directives/string/yesNo', () => {
@@ -254,3 +255,45 @@ describe('directives/string/yesNo', () => {
     });
 
 });
+
+
+describe('directives/string/decode', () => {
+
+    it('expected to have name property', () => {
+        expect(GraphQLDecodeDirective.name).to.a('string')
+    });
+
+    it('expected to have description property', () => {
+        expect(GraphQLDecodeDirective.description).to.a('string')
+    });
+
+    it('expected to have args properties', () => {
+        expect(GraphQLDecodeDirective.args).to.a('array')
+    });
+
+    it('expected to have locations list', () => {
+        expect(GraphQLDecodeDirective.locations).to.a('array');
+    });
+
+    it('expected to have resolve function', () => {
+        expect(GraphQLDecodeDirective.resolve).to.be.function;
+    });
+
+    it('expected regular execution of graphql', (done) => {
+        const query = `{ value }`,
+            directives = [],
+            expected = { value: null };
+
+        testEqual({ directives, query, expected, done });
+    });
+
+    it('expected directive to alter execution of graphql and result decode description', (done) => {
+        const query = `{ value(input: "1") @decode(as:"0-não,1-sim") }`,
+            directives = [GraphQLDecodeDirective],
+            expected = { value: "sim" };
+
+        testEqual({ directives, query, expected, done });
+    });
+
+});
+

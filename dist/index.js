@@ -32,4 +32,5 @@ exports.GraphQLToLowerDirective = _string.GraphQLToLowerDirective;
 exports.GraphQLToUpperDirective = _string.GraphQLToUpperDirective;
 exports.GraphQLYesNoDirective = _string.GraphQLYesNoDirective;
 exports.GraphQLTemplateDirective = _string.GraphQLTemplateDirective;
+exports.GraphQLDecodeDirective = _string.GraphQLDecodeDirective;
 exports.GraphQLTimeOffsetDirective = _date.GraphQLTimeOffsetDirective;

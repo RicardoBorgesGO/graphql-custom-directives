@@ -102,9 +102,9 @@ exports.GraphQLYesNoDirective = new GraphQLCustomDirective({
     },
     resolve(resolve, source, { asTrue = "sim", asFalse = "não", asNull = "" }) {
         return resolve().then(input => {
-            if (input == false || input == "false" || input == 0 || input == "0")
+            if (input == false || input == "false" || input === 0 || input == "0")
                 return asFalse;
-            if (input == true || input == "true" || input == 1 || input == "1")
+            if (input == true || input == "true" || input === 1 || input == "1")
                 return asTrue;
             if (input == null || input == "null") {
                 return asNull;
@@ -117,32 +117,32 @@ exports.GraphQLYesNoDirective = new GraphQLCustomDirective({
 
 exports.GraphQLDecodeDirective = new GraphQLCustomDirective({
     name: 'decode',
-    description: `Format the input as using lodash template`,
+    description: `Format the input as using decode like oracle function.`,
     locations: [
         DirectiveLocation.FIELD
     ],
     args: {
         as: {
             type: new GraphQLNonNull(GraphQLString),
-            description: 'A template given by lodash module'
+            description: 'String to decode. ${key}-${value} use comma(,) to separate. Ex: 0-active,1-active'
         }
     },
     resolve(resolve, source, { as }) {
         return resolve().then(input => {
-            let templateString = as;
-
-            templateString = templateString.replace(/\({1}([a-z]{1,})\)\}/g, '(data.$1)}').replace(/\$\{([a-z]{1,})/g, '${data.$1');
-
-            let output = template(templateString, { variable: 'data' })
-                (Object.assign({
-                    lowerCase, upperCase, camelCase,
-                    startCase, capitalize, kebabCase,
-                    trim, defaultTo, toLower, toUpper
-                }, {
-                        input
-                    }, source));
-
-            return output;
+            if (as) {
+                try {
+                    let list = as.split(",");
+                    for (var key of list) {
+                        key = key.split("-");
+                        if (key[0] == input.toString()) {
+                            return key[1];
+                        }
+                    }
+                } catch (error) {
+                    return input;
+                }
+            }
+            return input;
         });
     }
 });

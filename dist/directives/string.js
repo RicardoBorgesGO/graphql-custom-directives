@@ -112,8 +112,8 @@ exports.GraphQLYesNoDirective = new _custom.GraphQLCustomDirective({
             asNull = _ref3$asNull === undefined ? "" : _ref3$asNull;
 
         return _resolve3().then(function (input) {
-            if (input == false || input == "false" || input == 0 || input == "0") return asFalse;
-            if (input == true || input == "true" || input == 1 || input == "1") return asTrue;
+            if (input == false || input == "false" || input === 0 || input == "0") return asFalse;
+            if (input == true || input == "true" || input === 1 || input == "1") return asTrue;
             if (input == null || input == "null") {
                 return asNull;
             }
@@ -124,31 +124,53 @@ exports.GraphQLYesNoDirective = new _custom.GraphQLCustomDirective({
 
 exports.GraphQLDecodeDirective = new _custom.GraphQLCustomDirective({
     name: 'decode',
-    description: 'Format the input as using lodash template',
+    description: 'Format the input as using decode like oracle function.',
     locations: [_directives.DirectiveLocation.FIELD],
     args: {
         as: {
             type: new _graphql.GraphQLNonNull(_graphql.GraphQLString),
-            description: 'A template given by lodash module'
+            description: 'String to decode. ${key}-${value} use comma(,) to separate. Ex: 0-active,1-active'
         }
     },
     resolve: function resolve(_resolve4, source, _ref4) {
         var as = _ref4.as;
 
         return _resolve4().then(function (input) {
-            var templateString = as;
+            if (as) {
+                try {
+                    var list = as.split(",");
+                    var _iteratorNormalCompletion = true;
+                    var _didIteratorError = false;
+                    var _iteratorError = undefined;
 
-            templateString = templateString.replace(/\({1}([a-z]{1,})\)\}/g, '(data.$1)}').replace(/\$\{([a-z]{1,})/g, '${data.$1');
+                    try {
+                        for (var _iterator = list[Symbol.iterator](), _step; !(_iteratorNormalCompletion = (_step = _iterator.next()).done); _iteratorNormalCompletion = true) {
+                            var key = _step.value;
 
-            var output = (0, _lodash.template)(templateString, { variable: 'data' })(Object.assign({
-                lowerCase: _lodash.lowerCase, upperCase: _lodash.upperCase, camelCase: _lodash.camelCase,
-                startCase: _lodash.startCase, capitalize: _lodash.capitalize, kebabCase: _lodash.kebabCase,
-                trim: _lodash.trim, defaultTo: _lodash.defaultTo, toLower: _lodash.toLower, toUpper: _lodash.toUpper
-            }, {
-                input: input
-            }, source));
-
-            return output;
+                            key = key.split("-");
+                            if (key[0] == input.toString()) {
+                                return key[1];
+                            }
+                        }
+                    } catch (err) {
+                        _didIteratorError = true;
+                        _iteratorError = err;
+                    } finally {
+                        try {
+                            if (!_iteratorNormalCompletion && _iterator.return) {
+                                _iterator.return();
+                            }
+                        } finally {
+                            if (_didIteratorError) {
+                                throw _iteratorError;
+                            }
+                        }
+                    }
+                } catch (error) {
+                    return input;
+                }
+            }
+            return input;
         });
     }
 });
